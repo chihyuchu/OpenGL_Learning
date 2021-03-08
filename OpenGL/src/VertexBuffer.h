@@ -12,8 +12,3 @@ public:
 	void Unbind() const;
 };
 
-
-struct BufferLayout
-{
-
-};

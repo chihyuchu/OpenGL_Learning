@@ -134,6 +134,7 @@
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
+    <ClInclude Include="src\VertexBufferLayoutcpp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
