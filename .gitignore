@@ -1,0 +1,7 @@
+*.db
+.vs/
+OpenGL/vcxproj
+OpenGL/vcxproj.user
+OpenGL/vcxproj.filters
+Debug/*
+x64/*
