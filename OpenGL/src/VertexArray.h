@@ -1,6 +1,7 @@
 #pragma once
 #include "VertexBuffer.h"
-#include "VertexBufferLayoutcpp.h"
+
+class VertexBufferLayout;
 
 class VertexArray 
 {

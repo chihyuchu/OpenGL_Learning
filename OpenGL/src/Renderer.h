@@ -2,6 +2,9 @@
 
 #include <GL/glew.h>
 #include <iostream>
+#include "VertexArray.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
 
 #define ASSERT(x) if (!x) __debugbreak();
 #ifdef DEBUG
@@ -17,3 +20,17 @@
 
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
+
+
+/*
+Renderer: the class for render data and manage all stuffs
+*/
+class Renderer
+{
+private:
+
+public:
+	void Draw(VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+	void Clear() const;
+
+};
