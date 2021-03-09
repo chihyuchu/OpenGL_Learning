@@ -1,8 +1,2 @@
 ﻿  Application.cpp
-  InderBuffer.cpp
-  Renderer.cpp
-  Shader.cpp
-  VertexArray.cpp
-  VertexBuffer.cpp
-  Generating Code...
   OpenGL.vcxproj -> D:\Zhu\work\openGL\OpenGL_Learning\Debug\OpenGL.exe
