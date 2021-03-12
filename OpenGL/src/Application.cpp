@@ -14,6 +14,8 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 int main(void)
 {
@@ -27,7 +29,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 640, "OpenGL Window", NULL, NULL);
+	window = glfwCreateWindow(640, 480, "OpenGL Window", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -79,11 +81,13 @@ int main(void)
 
 		IndexBuffer ib(indices, 6);
 
+		glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
 		// use sstream and fstream to read source shader file
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-
+		shader.SetUniformMat4f("u_MVP", proj);
 		Texture texture("res/textures/love_icon.png");
 		texture.Bind(0);
 		shader.SetUniform1i("u_Texture", 0);
