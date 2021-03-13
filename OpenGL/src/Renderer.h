@@ -27,9 +27,11 @@ Renderer: the class for render data and manage all stuffs
 */
 class Renderer
 {
-private:
-
 public:
+	static Renderer& getInstace() {
+		static Renderer sInstance;
+		return sInstance;
+	}
 	void Draw(VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
 	void Clear() const;
 

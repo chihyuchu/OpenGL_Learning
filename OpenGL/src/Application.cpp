@@ -93,7 +93,7 @@ int main(void)
 		ib.Unbind();
 		shader.Unbind();
 
-		Renderer render;
+		Renderer &renderer = Renderer::getInstace();
 
 		float r = 0.0f;
 		float increment = 0.01f;
@@ -109,11 +109,11 @@ int main(void)
 			r += increment;
 
 			/* Render here */
-			render.Clear();
+			renderer.Clear();
 
 			shader.Bind();
 			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-			render.Draw(va, ib, shader);
+			renderer.Draw(va, ib, shader);
 
 			/* Swap front and back buffers */
 			GLCall(glfwSwapBuffers(window));

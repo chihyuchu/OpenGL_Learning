@@ -22,7 +22,6 @@ void Renderer::Clear() const
 
 void Renderer::Draw(VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
 {
-
 	shader.Bind();
 	va.Bind();
 	ib.Bind();
