@@ -29,7 +29,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "OpenGL Window", NULL, NULL);
+	window = glfwCreateWindow(960, 540, "OpenGL Window", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -49,10 +49,11 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
 		float positions[] = {
-		   -0.5f, -0.5f, 0.0f, 0.0f,
-			0.5f, -0.5f, 1.0f, 0.0f,
-			0.5f,  0.5f, 1.0f, 1.0f,
-		   -0.5f,  0.5f, 0.0f, 1.0f,
+			// coordinate	// layout
+			100.0f, 100.0f, 0.0f, 0.0f,
+			400.0f, 100.0f, 1.0f, 0.0f,
+			400.0f, 400.0f, 1.0f, 1.0f,
+			100.0f, 400.0f, 0.0f, 1.0f,
 		};
 
 		unsigned int indices[] = {
@@ -79,9 +80,9 @@ int main(void)
 		layout.Push<float>(2);
 		va.AddBuffer(vb, layout);
 
-		IndexBuffer ib(indices, 6);
+		IndexBuffer ib(indices, 12);
 
-		glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
 
 		// use sstream and fstream to read source shader file
 		Shader shader("res/shaders/Basic.shader");
