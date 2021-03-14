@@ -5,4 +5,5 @@ OpenGL/vcxproj.user
 OpenGL/vcxproj.filters
 Debug/*
 OpenGL/Debug/*
+OpenGL/Debug/OpenGL.tlog/*
 x64/*
