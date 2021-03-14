@@ -53,10 +53,10 @@ int main(void)
 	{
 		float positions[] = {
 			// coordinate	// layout
-			100.0f, 100.0f, 0.0f, 0.0f,
-			400.0f, 100.0f, 1.0f, 0.0f,
-			400.0f, 400.0f, 1.0f, 1.0f,
-			100.0f, 400.0f, 0.0f, 1.0f,
+			-50.0f, -50.0f, 0.0f, 0.0f,
+			 50.0f, -50.0f, 1.0f, 0.0f,
+			 50.0f,  50.0f, 1.0f, 1.0f,
+			-50.0f,  50.0f, 0.0f, 1.0f,
 		};
 
 		unsigned int indices[] = {
@@ -86,7 +86,7 @@ int main(void)
 		IndexBuffer ib(indices, 12);
 
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 		
 		glm::mat4 mvp = proj * view;
 
@@ -112,7 +112,8 @@ int main(void)
 
 		float r = 0.0f;
 		float increment = 0.01f;
-		glm::vec3 translation(-100.0f, 0.0f, 0.0f);
+		glm::vec3 translation(0, 0, 0);
+		glm::vec3 translation2(200, 0, 0);
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
@@ -126,20 +127,36 @@ int main(void)
 
 			// ImGui new frame
 			ImGui_ImplGlfwGL3_NewFrame();
-			glm::mat4 view = glm::translate(glm::mat4(1.0f), translation);
-			glm::mat4 mvp = proj * view;
 
 			/* Render here */
 			render.Clear();
 
 			shader.Bind();
-			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-			shader.SetUniformMat4f("u_MVP", mvp);
-			render.Draw(va, ib, shader);
+			//shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+
+			/* 
+			Draw multiple "repeat" objects can be done by using "different" MVP (multiplt translation matrix on one object)
+			However, when the number of repeat object grows up, we shouldn't use a for loop to do it. Less draw calls are better.
+			--> Batch Rendering!
+			*/
+			{	// Draw one object
+				glm::mat4 view = glm::translate(glm::mat4(1.0f), translation);
+				glm::mat4 mvp = proj * view;
+				shader.SetUniformMat4f("u_MVP", mvp);
+				render.Draw(va, ib, shader);
+			}
+
+			{	// Draw second object
+				glm::mat4 view = glm::translate(glm::mat4(1.0f), translation2);
+				glm::mat4 mvp = proj * view;
+				shader.SetUniformMat4f("u_MVP", mvp);
+				render.Draw(va, ib, shader);
+			} 
 
 			{
 				// ImGui Float setting
-				ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);            
+				ImGui::SliderFloat3("Translation 1", &translation.x, 0.0f, 960.0f);
+				ImGui::SliderFloat3("Translation 2", &translation2.x, 0.0f, 960.0f);
 				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 			}
 
