@@ -49,14 +49,34 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
 		float positions[] = {
+			// array coord		// texture coord
+			0.0f,	0.0f,		0.0f, 0.0f,
+			300.0f, 0.0f,		1.0f, 0.0f,
+			300.0f, 300.0f,		1.0f, 1.0f,
+			0.0f,	300.0f,		0.0f, 1.0f,
+		};
+
+		float positions_2[] = {
 			// coordinate	// layout
-			100.0f, 100.0f, 0.0f, 0.0f,
-			400.0f, 100.0f, 1.0f, 0.0f,
-			400.0f, 400.0f, 1.0f, 1.0f,
-			100.0f, 400.0f, 0.0f, 1.0f,
+			300.0f, 300.0f, 0.0f, 0.0f,
+			600.0f, 300.0f, 1.0f, 0.0f,
+			600.0f, 600.0f, 1.0f, 1.0f,
+			300.0f, 600.0f, 0.0f, 1.0f,
+		};
+
+		float positions_3[] = {
+			// coordinate	// layout
+			700.0f, 100.0f,
+			900.0f, 100.0f,
+			900.0f, 300.0f,
 		};
 
 		unsigned int indices[] = {
+			0, 1, 2,
+			2, 3, 0
+		};
+
+		unsigned int indices_3[] = {
 			0, 1, 2,
 			2, 3, 0
 		};
@@ -72,31 +92,72 @@ int main(void)
 		4. bind index buffer
 		*/
 
-		VertexArray va;
-		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+		VertexArray va1;
+		VertexBuffer vb1(positions, 4 * 4 * sizeof(float));
 
-		VertexBufferLayout layout;
-		layout.Push<float>(2);
-		layout.Push<float>(2);
-		va.AddBuffer(vb, layout);
+		VertexArray va2;
+		VertexBuffer vb2(positions_2, 4 * 4 * sizeof(float));
 
-		IndexBuffer ib(indices, 12);
+		VertexArray va3;
+		VertexBuffer vb3(positions_3, 4 * 4 * sizeof(float));
+
+		VertexBufferLayout layout1;
+		layout1.Push<float>(2);
+		layout1.Push<float>(2);
+		va1.AddBuffer(vb1, layout1);
+
+		VertexBufferLayout layout2;
+		layout2.Push<float>(2);
+		layout2.Push<float>(2);
+		va2.AddBuffer(vb2, layout2);
+
+		VertexBufferLayout layout3;
+		layout3.Push<float>(2);
+		va3.AddBuffer(vb3, layout3);
+
+		IndexBuffer ib1(indices, 6);
+		IndexBuffer ib2(indices, 6);
+		IndexBuffer ib3(indices_3, 6);
 
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
 
 		// use sstream and fstream to read source shader file
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
-		shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 		shader.SetUniformMat4f("u_MVP", proj);
-		Texture texture("res/textures/love_icon.png");
-		texture.Bind(0);
+		
+		// Setup texture coordination
+		Texture textureA("res/textures/love_icon.png");
+		textureA.Bind(0);
 		shader.SetUniform1i("u_Texture", 0);
 
-		va.Unbind();
-		vb.Unbind();
-		ib.Unbind();
+		Texture textureB("res/textures/terrain.png");
+		textureB.Bind(1);
+		shader.SetUniform1i("u_Texture", 1);
+
+		// use sstream and fstream to read source shader file
+		Shader shader2("res/shaders/Triangle.shader");
+		shader2.Bind();
+		shader2.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+		shader2.SetUniformMat4f("u_MVP", proj);
+
+		// Unbind object 1
+		va1.Unbind();
+		vb1.Unbind();
+		ib1.Unbind();
+
+		// Unbind object 2
+		va2.Unbind();
+		vb2.Unbind();
+		ib2.Unbind();		
+		
+		// Unbind object 3
+		va3.Unbind();
+		vb3.Unbind();
+		ib3.Unbind();
+
 		shader.Unbind();
+		shader2.Unbind();
 
 		Renderer render;
 
@@ -116,9 +177,25 @@ int main(void)
 			/* Render here */
 			render.Clear();
 
+			// Using "shader" to draw texture A and texture B
 			shader.Bind();
-			shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-			render.Draw(va, ib, shader);
+			// Draw texture A
+			textureA.Bind(0);
+			shader.SetUniform1i("u_Texture", 0);
+			render.Draw(va1, ib1, shader);
+			
+			// Draw texture B
+			textureB.Bind(0);
+			shader.SetUniform1i("u_Texture", 1);
+			render.Draw(va2, ib2, shader);
+			
+			// Release/unbind "shader"
+			shader.Unbind();
+
+			// Using "shader2" to draw Triangle C
+			shader2.Bind();
+			shader2.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+			render.Draw(va3, ib3, shader2);
 
 			/* Swap front and back buffers */
 			GLCall(glfwSwapBuffers(window));
