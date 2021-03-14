@@ -83,12 +83,15 @@ int main(void)
 		IndexBuffer ib(indices, 12);
 
 		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100.0f, 0.0f, 0.0f));
+		
+		glm::mat4 mvp = proj * view;
 
 		// use sstream and fstream to read source shader file
 		Shader shader("res/shaders/Basic.shader");
 		shader.Bind();
 		shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_MVP", proj);
+		shader.SetUniformMat4f("u_MVP", mvp);
 		Texture texture("res/textures/love_icon.png");
 		texture.Bind(0);
 		shader.SetUniform1i("u_Texture", 0);
