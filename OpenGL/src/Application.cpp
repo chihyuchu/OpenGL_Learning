@@ -20,6 +20,8 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
 
+#include "tests/TestClearColor.h"
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -51,58 +53,10 @@ int main(void)
 	/* print out OpenGL version*/
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
-		float positions[] = {
-			// coordinate	// layout
-			-50.0f, -50.0f, 0.0f, 0.0f,
-			 50.0f, -50.0f, 1.0f, 0.0f,
-			 50.0f,  50.0f, 1.0f, 1.0f,
-			-50.0f,  50.0f, 0.0f, 1.0f,
-		};
-
-		unsigned int indices[] = {
-			0, 1, 2,
-			2, 3, 0
-		};
-		
+	
 		// Blend to ensure alpha (transparent)
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-		/* Drawing an object process:
-		1. bind shader
-		2. bind vertex buffer
-		3. setup vertex layout
-		4. bind index buffer
-		*/
-
-		VertexArray va;
-		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
-
-		VertexBufferLayout layout;
-		layout.Push<float>(2);
-		layout.Push<float>(2);
-		va.AddBuffer(vb, layout);
-
-		IndexBuffer ib(indices, 12);
-
-		glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 0.0f));
-		
-		glm::mat4 mvp = proj * view;
-
-		// use sstream and fstream to read source shader file
-		Shader shader("res/shaders/Basic.shader");
-		shader.Bind();
-		//shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-		shader.SetUniformMat4f("u_MVP", mvp);
-		Texture texture("res/textures/love_icon.png");
-		texture.Bind(0);
-		shader.SetUniform1i("u_Texture", 0);
-
-		va.Unbind();
-		vb.Unbind();
-		ib.Unbind();
-		shader.Unbind();
 
 		Renderer render;
 
@@ -110,56 +64,21 @@ int main(void)
 		ImGui_ImplGlfwGL3_Init(window, true);
 		ImGui::StyleColorsDark();
 
-		float r = 0.0f;
-		float increment = 0.01f;
-		glm::vec3 translation(0, 0, 0);
-		glm::vec3 translation2(200, 0, 0);
+		test::TestClearColor test;
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
-			/* R channel increament*/
-			if (r > 1.0f)
-				increment = -0.01f;
-			else if (r < 0.0f)
-				increment = 0.01f;
-			r += increment;
-
-			// ImGui new frame
-			ImGui_ImplGlfwGL3_NewFrame();
 
 			/* Render here */
 			render.Clear();
 
-			shader.Bind();
-			//shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+			test.OnUpdate(0.0f);
+			test.OnRender();
 
-			/* 
-			Draw multiple "repeat" objects can be done by using "different" MVP (multiplt translation matrix on one object)
-			However, when the number of repeat object grows up, we shouldn't use a for loop to do it. Less draw calls are better.
-			--> Batch Rendering!
-			*/
-			{	// Draw one object
-				glm::mat4 view = glm::translate(glm::mat4(1.0f), translation);
-				glm::mat4 mvp = proj * view;
-				shader.SetUniformMat4f("u_MVP", mvp);
-				render.Draw(va, ib, shader);
-			}
-
-			{	// Draw second object
-				glm::mat4 view = glm::translate(glm::mat4(1.0f), translation2);
-				glm::mat4 mvp = proj * view;
-				shader.SetUniformMat4f("u_MVP", mvp);
-				render.Draw(va, ib, shader);
-			} 
-
-			{
-				// ImGui Float setting
-				ImGui::SliderFloat3("Translation 1", &translation.x, 0.0f, 960.0f);
-				ImGui::SliderFloat3("Translation 2", &translation2.x, 0.0f, 960.0f);
-				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			}
-
+			// ImGui new frame
+			ImGui_ImplGlfwGL3_NewFrame();
+			test.OnImGuiRender();
 			// Render ImGUi
 			ImGui::Render();
 			ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -169,10 +88,7 @@ int main(void)
 
 			/* Poll for and process events */
 			GLCall(glfwPollEvents());
-
 		}
-		
-		shader.Unbind();
 	}
 
 	// Cleanup ImGui
