@@ -6,4 +6,5 @@ OpenGL/vcxproj.filters
 Debug/*
 OpenGL/Debug/*
 OpenGL/Debug/OpenGL.tlog/*
+OpenGL/imgui.ini
 x64/*
