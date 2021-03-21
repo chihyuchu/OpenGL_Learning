@@ -22,9 +22,11 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
+#include "tests/TestTriangle2D.h"
 
 int main(void)
 {
+	// Simple benchmark
 	GLFWwindow* window;
 
 	/* Initialize the library */
@@ -54,7 +56,6 @@ int main(void)
 	/* print out OpenGL version*/
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
-	
 		// Blend to ensure alpha (transparent)
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -70,6 +71,7 @@ int main(void)
 		current = menu;
 		menu->RegisterTest<test::TestClearColor>("ClearColor");
 		menu->RegisterTest<test::TestTexture2D>("2D Texture");
+		menu->RegisterTest<test::TestTriangle2D>("2D Triangle");
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
