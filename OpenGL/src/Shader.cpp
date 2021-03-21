@@ -9,7 +9,6 @@ Shader::Shader(const std::string & filepath)
 	:m_FilePath(filepath), m_RenderID(0)
 
 {
-
 	ShaderProgramSource source = ParseShader(filepath);
 	m_RenderID = CreateShader(source.vertexSource, source.fragmentSource);
 }
@@ -95,8 +94,6 @@ unsigned int Shader::CreateShader(const std::string& vertexShader, const std::st
 
 	return program;
 }
-
-
 
 
 void Shader::Bind() const

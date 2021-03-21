@@ -16,9 +16,9 @@ namespace test
 	{
 		float positions[] = {
 			// coordinate	//layout
-			-50.0f, -50.0f,	0.0f, 0.0f,
-			 50.0f, -50.0f,	0.0f, 0.0f,
-			  0.0f,  50.0f,	0.0f, 0.0f
+			-50.0f, -50.0f,	1.0f, 0.0f, 0.0f,
+			 50.0f, -50.0f,	0.0f, 1.0f, 0.0f,
+			  0.0f,  50.0f,	0.0f, 0.0f, 1.0f
 		};
 
 		unsigned int indices[] = {
@@ -39,16 +39,16 @@ namespace test
 		// initialization
 		m_Shader = std::make_unique<Shader>("res/shaders/Triangle.shader");
 		m_VAO = std::make_unique<VertexArray>();
-		m_VBO = std::make_unique<VertexBuffer>(positions, 4 * 4 * sizeof(float));
+		m_VBO = std::make_unique<VertexBuffer>(positions, 5 * 3 * sizeof(float));
 		VertexBufferLayout layout;
 		layout.Push<float>(2);
-		layout.Push<float>(2);
+		layout.Push<float>(3);
 		m_VAO->AddBuffer(*m_VBO, layout);
 		m_IBO = std::make_unique<IndexBuffer>(indices, 3);
 
 		// use sstream and fstream to read source shader file
 		m_Shader->Bind();
-		m_Shader->SetUniform4f("u_Color", brightness, brightness, brightness, 1.0f);
+		m_Shader->SetUniform1f("brightness", brightness);
 	}
 
 	test::TestTriangle2D::~TestTriangle2D()
@@ -64,7 +64,7 @@ namespace test
 		// Make my triangle shine ><!
 		if (brightness > 1.0f)
 			increment = -0.05f;
-		else if (brightness < -1.0f)
+		else if (brightness < 0.0f)
 			increment = 0.05f;
 		brightness += increment;
 
@@ -73,7 +73,7 @@ namespace test
 		{	// Draw one object
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), m_translation);
 			glm::mat4 mvp = m_Proj * m_View * model;
-			m_Shader->SetUniform4f("u_Color", brightness, brightness, brightness, 1.0f);
+			m_Shader->SetUniform1f("brightness", brightness);
 			m_Shader->SetUniformMat4f("u_MVP", mvp);
 			render.Draw(*m_VAO, *m_IBO, *m_Shader);
 		}
