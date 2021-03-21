@@ -1,1 +1,0 @@
-#include "TestClearColor.h"
