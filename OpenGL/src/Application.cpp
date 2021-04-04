@@ -23,6 +23,7 @@
 #include "tests/TestClearColor.h"
 #include "tests/TestTexture2D.h"
 #include "tests/TestTriangle2D.h"
+#include "tests/TestGrowingSheep.h"
 
 int main(void)
 {
@@ -72,6 +73,7 @@ int main(void)
 		menu->RegisterTest<test::TestClearColor>("ClearColor");
 		menu->RegisterTest<test::TestTexture2D>("2D Texture");
 		menu->RegisterTest<test::TestTriangle2D>("2D Triangle");
+		menu->RegisterTest<test::TestGrowingSheep>("Growing Sheep");
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
